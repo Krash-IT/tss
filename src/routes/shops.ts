@@ -15,14 +15,12 @@ router.get('/', auth, async(req: Request, res: Response) => {
 
 router.post('/', auth, async(req:Request, res: Response) => {
     const {name, address} = req.body;
-    const exists = await prisma.shop.findMany({
-        where: {name}
+    const exists = await prisma.shop.findUnique({
+        where: {name: name}
     })
 
     if (exists) {
-        return res
-            .status(400)
-            .json({'detail': 'Shop with similar name exists'})
+        return res.status(400).json({'detail': 'Shop with similar name exists'})
     }
 
     const shop = await prisma.shop.create({ data: {

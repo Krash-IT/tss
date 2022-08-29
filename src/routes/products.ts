@@ -12,7 +12,15 @@ router.get('/', auth, async(req: Request, res: Response) => {
     res.send({'products': products});
 })
 
-router.post('/', auth, async(req:Request, res: Response) => {
+router.post('/', auth, async(req: Request, res: Response) => {
+    const exists = await prisma.product.findUnique({
+        where: {name: req.body.name}
+    })
+
+    if (exists) {
+        return res.status(400).json({'detail': 'Shop with similar name exists'})
+    }
+
     const product = await prisma.product.create({ data: req.body });
     res.send(product);
 })
